@@ -87,6 +87,7 @@
 
 
         //*******************Going through menu*******************
+        #region Going_through_menu
         public static void PrintMenu()
         {
             int option = -1;
@@ -183,7 +184,9 @@
                     break;
             }
         }
+        #endregion
 
+        #region Player_input_handling
         //*******************Player input handling*******************
         public static void GoToPlayersResultsDecision(int option)
         {
@@ -295,7 +298,9 @@
             return GetValidPlayersAnswer(1, 4, false); //naudojamas zaidejui ivesti atsakyma i klausima, tinka tik 1-4 ivestys
 
         }
+        #endregion
 
+        #region Game
         //*******************Game*******************
         public static void StartGame()
         {
@@ -439,7 +444,9 @@
 
             return correctAnswerIndex == playersAnswer - 1;
         }
+        #endregion
 
+        #region Login_and_logout
         //*******************Log in and Log out*******************
         public static void LogOut()
         //atsijungimo metu pakeiciami tam tikri kintamieji - currentPlayer, currentQuestion
@@ -525,7 +532,9 @@
             }
             return formattedName;
         }
+        #endregion
 
+        #region Rankings
         //*******************Rankings and listing players*******************
         public static void PrintPlayers()
         {
@@ -615,6 +624,8 @@
 
             return playersListWithStars;
         }
+        #endregion
+
         //*******************Rules*******************
         public static void PrintRules()
         {
@@ -648,6 +659,7 @@
             }                    
         }
 
+        #region Questions_and_shuffling
         //*******************Questions and shuffling*******************
         public static void RandomizeQuestionsOrder() //zodyne questionsWithAnswersShuffled sukeiciami klausimai vietoms
         {
@@ -757,5 +769,7 @@
             }
 
         }
+
+        #endregion
     }
 }

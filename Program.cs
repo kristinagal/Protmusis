@@ -32,26 +32,23 @@
 
         static void Main(string[] args)
         {
-            //Program.playersDictionary.Add("Player1", 0);
-            //Program.playersDictionary.Add("Player2", 5);
-            //Program.playersDictionary.Add("Player3", 1);
-            //Program.playersDictionary.Add("Player4", 4);
-            //Program.playersDictionary.Add("Player5", 2);
-            //Program.playersDictionary.Add("Player6", 3);
-            //Program.playersDictionary.Add("Player7", 0);
-            //Program.playersDictionary.Add("Player8", 5);
-            //Program.playersDictionary.Add("Player9", 2);
-            //Program.playersDictionary.Add("Player10", 5);
-            //Program.playersDictionary.Add("Player11", 3);
-            //Program.playersDictionary.Add("Player12", 5);
-            //Program.playersDictionary.Add("Player13", 0);
-            //Program.playersDictionary.Add("Player14", 5);
-            //Program.playersDictionary.Add("Player15", 0);
+            Program.playersDictionary.Add("Player1", 0);
+            Program.playersDictionary.Add("Player2", 5);
+            Program.playersDictionary.Add("Player3", 1);
+            Program.playersDictionary.Add("Player4", 4);
+            Program.playersDictionary.Add("Player5", 2);
+            Program.playersDictionary.Add("Player6", 3);
+            Program.playersDictionary.Add("Player7", 0);
+            Program.playersDictionary.Add("Player8", 5);
+            Program.playersDictionary.Add("Player9", 2);
+            Program.playersDictionary.Add("Player10", 5);
+            Program.playersDictionary.Add("Player11", 3);
 
             Protmusis();
 
 
             ////GetValidPlayersAnswer testavimas (del console.readline nepavyko padaryti unit testu)
+            
             //int lower = 1;
             //int upper = 10;
             //bool qCheck = false;
@@ -87,6 +84,9 @@
 
             PrintMenu(); //sekmingai prisijungus atspausdinamas meniu
         }
+
+
+        //*******************Going through menu*******************
         public static void PrintMenu()
         {
             int option = -1;
@@ -156,10 +156,96 @@
 
         }
 
+        public static void GoToPlayersMenuDecision(int option)
+        {
+            switch (option) //judejimui po meniu punktus
+            {
+                case 1:
+                    LogIn();
+                    break;
+                case 2:
+                    PrintRules();
+                    break;
+                case 3:
+                    PrintResultsMenu();
+                    break;
+                case 4:
+                    StartGame();
+                    break;
+                case 5:
+                    LogOut();
+                    break;
+                case 6: //pasirinko exit, griztam i meniu ir jame iseinama is ciklo
+                    break;
+                case 0: //paspaude q
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //*******************Player input handling*******************
+        public static void GoToPlayersResultsDecision(int option)
+        {
+            switch (option)
+            {
+                case 1:
+                    PrintPlayers();
+                    break;
+                case 2:
+                    PrintRankings(AddStarsToTopPlayers());
+                    break;
+                case 0: //paspaude q
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public static int GetValidPlayersAnswer(int lower, int upper, bool qCheck)
+        //grazina tik validu atsakyma = tarp lower ir upper, papildomai gali tikrint ir q
+        {
+            int answer = -1;
+            bool valid = false;
+            string text = "";
+
+            while (true)
+            {
+                int currentLineCursor = Console.CursorTop;
+
+                text = Console.ReadLine()?.Trim().ToUpper();
+
+                if (text == "Q" && qCheck) // paspaude q
+                {
+                    return 0; //jei metodui padaveme qCheck = true ir buvo ivesta q, grazinamas 0
+                }
+
+                valid = int.TryParse(text, out answer);
+
+                if (!valid || answer < lower || answer > upper)
+                {
+                    ClearInvalidInputFromConsole(); //istrinama is konsoles mums netinkanti ivestis
+                }
+                else
+                {
+                    break; // ivede validu atsakyma
+                }
+            }
+
+            return answer;
+        }
+
+        public static void ClearInvalidInputFromConsole()
+        //naudojama kituose metoduose istrinti is konsoles ivesta mums netinkancia ivesti
+        {
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, Console.CursorTop);
+        }
         public static bool PlayerPressedQtoExit()
         {
             //cia tikimasi, kad zaidejas ives butent q, nes paduodam neimanomas ispildyti lower ir upper vertes
-            int option = GetValidPlayersAnswer(1, 0, true); 
+            int option = GetValidPlayersAnswer(1, 0, true);
 
             if (option == 0) //buvo ivesta q
             {
@@ -210,51 +296,7 @@
 
         }
 
-        public static void GoToPlayersMenuDecision(int option)
-        {
-            switch (option) //judejimui po meniu punktus
-            {
-                case 1:
-                    LogIn();
-                    break;
-                case 2:
-                    PrintRules();
-                    break;
-                case 3:
-                    PrintResultsMenu();
-                    break;
-                case 4:
-                    StartGame();
-                    break;
-                case 5:
-                    LogOut();
-                    break;
-                case 6: //pasirinko exit, griztam i meniu ir jame iseinama is ciklo
-                    break;
-                case 0: //paspaude q
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public static void GoToPlayersResultsDecision(int option)
-        {
-            switch (option)
-            {
-                case 1:
-                    PrintPlayers();
-                    break;
-                case 2:
-                    PrintRankings(AddStarsToTopPlayers());
-                    break;
-                case 0: //paspaude q
-                    break;
-                default:
-                    break;
-            }
-        }
-
+        //*******************Game*******************
         public static void StartGame()
         {
             if (string.IsNullOrEmpty(currentPlayer)) //tikrina, ar yra prisijunges zaidejas
@@ -357,39 +399,62 @@
             }
         }
 
-        public static int GetValidPlayersAnswer(int lower, int upper, bool qCheck) 
-            //grazina tik validu atsakyma = tarp lower ir upper, papildomai gali tikrint ir q
+        public static void UpdatePointsForCurrentPlayer(int points)
+        //zaidejui pridedami taskai
         {
-            int answer = -1;
-            bool valid = false;
-            string text = "";
-
-            while (true)
-            {
-                int currentLineCursor = Console.CursorTop;
-
-                text = Console.ReadLine()?.Trim().ToUpper();
-
-                if (text == "Q" && qCheck) // paspaude q
-                {
-                    return 0; //jei metodui padaveme qCheck = true ir buvo ivesta q, grazinamas 0
-                }
-
-                valid = int.TryParse(text, out answer);
-
-                if (!valid || answer < lower || answer > upper)
-                {
-                    ClearInvalidInputFromConsole(); //istrinama is konsoles mums netinkanti ivestis
-                }
-                else
-                {
-                    break; // ivede validu atsakyma
-                }
-            }
-
-            return answer;
+            playersDictionary[currentPlayer] += points;
         }
 
+        public static void PrintOneQuestionWithAnswersFromShuffled(int questionIndex)
+        //atspausdinamas paduoto indekso klausimas, o cikle atspausdinami atsakymu variantai
+        {
+            var question = GetQuestionOutOfShuffled(questionIndex); //paimame is zodyno mums reikalinga key value pora
+
+            Console.WriteLine(question.Key);
+            for (int i = 0; i < question.Value.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {question.Value[i]}");
+            }
+        }
+
+        public static KeyValuePair<string, List<string>> GetQuestionOutOfShuffled(int questionIndex)
+        {
+            if (questionIndex < 0 || questionIndex >= questionsWithAnswersShuffled.Count)
+            {
+                Console.WriteLine("Invalid question index.");
+                return default;
+            }
+
+            return questionsWithAnswersShuffled.ElementAt(questionIndex);
+        }
+
+        public static bool CheckIfAnswerIsCorrect(int questionIndex, int playersAnswer)
+        //tikrinama, ar zaidejo pasirinktas atsakymas sutampa su pirmuoju atsakymu zodyne questionsWithAnswers1stCorrect
+        {
+            var question = questionsWithAnswersShuffled.ElementAt(questionIndex);
+
+            var correctAnswer = questionsWithAnswers1stCorrect[question.Key][0]; //teisingas atsakymas string tipo
+
+            int correctAnswerIndex = question.Value.IndexOf(correctAnswer);
+
+            return correctAnswerIndex == playersAnswer - 1;
+        }
+
+        //*******************Log in and Log out*******************
+        public static void LogOut()
+        //atsijungimo metu pakeiciami tam tikri kintamieji - currentPlayer, currentQuestion
+        {
+            if (currentPlayer != "")
+                playersCurrentQuestion[currentPlayer] = currentQuestion;
+
+            currentPlayer = "";
+            currentQuestion = 1;
+
+            Console.WriteLine("You are now logged out.");
+            Console.WriteLine();
+
+            ReadPlayersQ();
+        }
         public static void LogIn()
         {
             if (currentPlayer == "") //leidziame login tik kai niekas neprisijunges
@@ -429,7 +494,6 @@
             ReadPlayersQ();
 
         }
-
         public static string CapitalizeFirstLetter(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -462,70 +526,7 @@
             return formattedName;
         }
 
-        public static void ClearInvalidInputFromConsole() 
-            //naudojama kituose metoduose istrinti is konsoles ivesta mums netinkancia ivesti
-        {
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, Console.CursorTop);
-        }
-
-        public static void LogOut() 
-            //atsijungimo metu pakeiciami tam tikri kintamieji - currentPlayer, currentQuestion
-        {
-            if (currentPlayer != "")
-                playersCurrentQuestion[currentPlayer] = currentQuestion;
-
-            currentPlayer = "";
-            currentQuestion = 1;
-
-            Console.WriteLine("You are now logged out.");
-            Console.WriteLine();
-
-            ReadPlayersQ();
-        }
-
-        public static void UpdatePointsForCurrentPlayer(int points)
-            //zaidejui pridedami taskai
-        {
-            playersDictionary[currentPlayer] += points;
-        }
-
-        public static void PrintOneQuestionWithAnswersFromShuffled(int questionIndex)
-            //atspausdinamas paduoto indekso klausimas, o cikle atspausdinami atsakymu variantai
-        {
-            var question = GetQuestionOutOfShuffled(questionIndex); //paimame is zodyno mums reikalinga key value pora
-
-            Console.WriteLine(question.Key);
-            for (int i = 0; i < question.Value.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. {question.Value[i]}");
-            }
-        }
-
-        public static KeyValuePair<string, List<string>> GetQuestionOutOfShuffled(int questionIndex)
-        {
-            if (questionIndex < 0 || questionIndex >= questionsWithAnswersShuffled.Count)
-            {
-                Console.WriteLine("Invalid question index.");
-                return default;
-            }
-
-            return questionsWithAnswersShuffled.ElementAt(questionIndex);
-        }
-
-        public static bool CheckIfAnswerIsCorrect(int questionIndex, int playersAnswer)
-        //tikrinama, ar zaidejo pasirinktas atsakymas sutampa su pirmuoju atsakymu zodyne questionsWithAnswers1stCorrect
-        {
-            var question = questionsWithAnswersShuffled.ElementAt(questionIndex);
-
-            var correctAnswer = questionsWithAnswers1stCorrect[question.Key][0]; //teisingas atsakymas string tipo
-
-            int correctAnswerIndex = question.Value.IndexOf(correctAnswer);
-
-            return correctAnswerIndex == playersAnswer - 1;
-        }
-
+        //*******************Rankings and listing players*******************
         public static void PrintPlayers()
         {
             Console.Clear();
@@ -614,7 +615,7 @@
 
             return playersListWithStars;
         }
-
+        //*******************Rules*******************
         public static void PrintRules()
         {
             ShowCurrentPlayer();
@@ -632,7 +633,7 @@
             Console.WriteLine();
             ReadPlayersQ();
         }
-
+        //*******************Show current player*******************
         public static void ShowCurrentPlayer()
         {
             if (string.IsNullOrEmpty(currentPlayer))
@@ -647,6 +648,7 @@
             }                    
         }
 
+        //*******************Questions and shuffling*******************
         public static void RandomizeQuestionsOrder() //zodyne questionsWithAnswersShuffled sukeiciami klausimai vietoms
         {
             questionsWithAnswersShuffled.Clear();
